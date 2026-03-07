@@ -1,94 +1,116 @@
 let evento;
 
-window.onload = function(){
+window.onload = function () {
 
-evento = JSON.parse(localStorage.getItem("evento"));
+    evento = JSON.parse(localStorage.getItem("evento"));
 
-if(!evento){
+    if (!evento) {
+        alert("No hay evento guardado");
+        return;
+    }
 
-alert("No hay evento guardado");
-return;
+    document.getElementById("org").textContent = evento.organizador;
+    document.getElementById("nombreEvento").textContent = evento.nombreEvento;
+    document.getElementById("tipoEvento").textContent = evento.tipoEvento;
+    document.getElementById("fechaEvento").textContent = evento.fecha;
+    document.getElementById("presupuestoEvento").textContent = evento.presupuesto;
 
-}
-
-document.getElementById("org").textContent = evento.organizador;
-document.getElementById("nombreEvento").textContent = evento.nombreEvento;
-document.getElementById("fechaEvento").textContent = evento.fecha;
-document.getElementById("presupuestoEvento").textContent = evento.presupuesto;
-
-mostrarParticipantes();
-
-}
-
-function mostrarParticipantes(){
-
-let lista = document.getElementById("listaParticipantes");
-
-lista.innerHTML = "";
-
-evento.participantes.forEach(p => {
-
-let li = document.createElement("li");
-
-li.className = "list-group-item";
-
-li.textContent = p;
-
-lista.appendChild(li);
-
-});
+    mostrarParticipantes();
+    mostrarExclusiones();
 
 }
 
-function hacerSorteo(){
+function mostrarParticipantes() {
 
-let participantes = [...evento.participantes];
+    let lista = document.getElementById("listaParticipantes");
 
-let resultados = [];
+    lista.innerHTML = "";
 
-let copia = [...participantes];
+    evento.participantes.forEach(p => {
 
-for(let i=0;i<participantes.length;i++){
+        let li = document.createElement("li");
 
-let persona = participantes[i];
+        li.className = "list-group-item";
 
-let posible;
+        li.textContent = p;
 
-do{
+        lista.appendChild(li);
 
-posible = copia[Math.floor(Math.random()*copia.length)];
-
-}while(posible === persona);
-
-resultados.push({
-de: persona,
-para: posible
-});
-
-copia.splice(copia.indexOf(posible),1);
+    });
 
 }
 
-mostrarResultados(resultados);
+function mostrarExclusiones() {
+
+    let lista = document.getElementById("listaExclusiones");
+
+    lista.innerHTML = "";
+
+    evento.exclusiones.forEach(e => {
+
+        let li = document.createElement("li");
+
+        li.className = "list-group-item";
+
+        li.textContent = e.de + " no puede regalar a " + e.para;
+
+        lista.appendChild(li);
+
+    });
 
 }
 
-function mostrarResultados(resultados){
+function hacerSorteo() {
 
-let lista = document.getElementById("resultadoSorteo");
+    let participantes = [...evento.participantes];
 
-lista.innerHTML = "";
+    let copia = [...participantes];
 
-resultados.forEach(r => {
+    let resultados = [];
 
-let li = document.createElement("li");
+    for (let persona of participantes) {
 
-li.className = "list-group-item";
+        let posibles = copia.filter(p => {
 
-li.textContent = r.de + " → " + r.para;
+            if (p === persona) return false;
 
-lista.appendChild(li);
+            let prohibido = evento.exclusiones.some(e => e.de === persona && e.para === p);
 
-});
+            return !prohibido;
+
+        });
+
+        let elegido = posibles[Math.floor(Math.random() * posibles.length)];
+
+        resultados.push({
+            de: persona,
+            para: elegido
+        });
+
+        copia.splice(copia.indexOf(elegido), 1);
+
+    }
+
+    mostrarResultados(resultados);
+
+}
+
+function mostrarResultados(resultados) {
+
+    let lista = document.getElementById("resultadoSorteo");
+
+    lista.innerHTML = "";
+
+    resultados.forEach(r => {
+
+        let li = document.createElement("li");
+
+        li.className = "list-group-item";
+
+        li.textContent = r.de + " → " + r.para;
+
+        lista.appendChild(li);
+
+    });
 
 }

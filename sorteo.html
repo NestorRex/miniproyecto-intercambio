@@ -3,55 +3,60 @@
 
 <head>
 
-<meta charset="UTF-8">
-<title>Sorteo</title>
+    <meta charset="UTF-8">
+    <title>Sorteo</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
 
 <body class="bg-light">
 
-<div class="container mt-5">
+    <div class="container mt-5">
 
-<h2 class="text-center mb-4">Sorteo del Intercambio 🎁</h2>
+        <h2 class="text-center mb-4">Sorteo del Intercambio 🎁</h2>
 
-<div class="card p-4 shadow">
+        <div class="card p-4 shadow">
 
-<h4>Información del Evento</h4>
+            <h4>Información del Evento</h4>
 
-<p><strong>Organizador:</strong> <span id="org"></span></p>
-<p><strong>Evento:</strong> <span id="nombreEvento"></span></p>
-<p><strong>Fecha:</strong> <span id="fechaEvento"></span></p>
-<p><strong>Presupuesto:</strong> $<span id="presupuestoEvento"></span></p>
+            <p><strong>Organizador:</strong> <span id="org"></span></p>
+            <p><strong>Evento:</strong> <span id="nombreEvento"></span></p>
+            <p><strong>Tipo:</strong> <span id="tipoEvento"></span></p>
+            <p><strong>Fecha:</strong> <span id="fechaEvento"></span></p>
+            <p><strong>Presupuesto:</strong> $<span id="presupuestoEvento"></span></p>
 
-<hr>
+            <hr>
 
-<h4>Participantes</h4>
+            <h4>Participantes</h4>
 
-<ul id="listaParticipantes" class="list-group mb-3"></ul>
+            <ul id="listaParticipantes" class="list-group mb-3"></ul>
 
-<div class="text-center">
+            <h4>Exclusiones</h4>
 
-<button class="btn btn-danger" onclick="hacerSorteo()">
-Realizar Sorteo
-</button>
+            <ul id="listaExclusiones" class="list-group mb-3"></ul>
 
-</div>
+            <div class="text-center">
 
-<hr>
+                <button class="btn btn-danger" onclick="hacerSorteo()">
+                    Realizar Sorteo
+                </button>
 
-<h4 class="mt-3">Resultados</h4>
+            </div>
 
-<ul id="resultadoSorteo" class="list-group"></ul>
+            <hr>
 
-</div>
+            <h4>Resultados</h4>
 
-</div>
+            <ul id="resultadoSorteo" class="list-group"></ul>
 
-<script src="js/sorteo.js"></script>
+        </div>
+
+    </div>
+
+    <script src="js/sorteo.js"></script>
 
 </body>
 
