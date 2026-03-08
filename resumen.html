@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resumen – GiftSwap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="bg-light">
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+
+        <h2 class="text-center mb-4">🎉 ¡Evento listo!</h2>
+
+        <!-- Datos del evento (leídos de localStorage) -->
+        <div class="card p-4 shadow mb-4">
+          <h4 class="mb-3">📋 Datos del Evento</h4>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="dato-item">
+                <span class="dato-label">Organizador</span>
+                <span class="dato-valor" id="rOrganizador">–</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="dato-item">
+                <span class="dato-label">Celebración</span>
+                <span class="dato-valor" id="rNombre">–</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="dato-item">
+                <span class="dato-label">Tipo</span>
+                <span class="dato-valor" id="rTipo">–</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="dato-item">
+                <span class="dato-label">Fecha</span>
+                <span class="dato-valor" id="rFecha">–</span>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="dato-item">
+                <span class="dato-label">Presupuesto</span>
+                <span class="dato-valor presupuesto-badge" id="rPresupuesto">–</span>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <h5 class="mb-2">👥 Participantes (<span id="rNumPart">0</span>)</h5>
+          <div class="row g-2" id="rParticipantes"></div>
+
+          <div id="rExclWrapper">
+            <hr>
+            <h5 class="mb-2">🚫 Exclusiones</h5>
+            <ul id="rExclusiones" class="list-group"></ul>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <a href="sorteo.html" class="btn btn-danger btn-lg w-100">
+              🎲 Realizar Sorteo
+            </a>
+          </div>
+          <div class="col-12 col-md-6">
+            <a href="evento.html" class="btn btn-outline-secondary btn-lg w-100">
+              ✏️ Editar Evento
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Lee SIEMPRE de localStorage (nunca de RAM)
+    const evento = JSON.parse(localStorage.getItem('evento'));
+
+    if (!evento) {
+      alert('No hay evento guardado. Crea uno primero.');
+      location.href = 'evento.html';
+    } else {
+      document.getElementById('rOrganizador').textContent  = evento.organizador;
+      document.getElementById('rNombre').textContent       = evento.nombreEvento || evento.tipoEvento;
+      document.getElementById('rTipo').textContent         = evento.tipoEvento;
+      document.getElementById('rFecha').textContent        = formatearFecha(evento.fecha);
+      document.getElementById('rPresupuesto').textContent  = '$' + evento.presupuesto;
+      document.getElementById('rNumPart').textContent      = evento.participantes.length;
+
+      // Participantes como chips
+      const contenedor = document.getElementById('rParticipantes');
+      evento.participantes.forEach(p => {
+        const col = document.createElement('div');
+        col.className = 'col-6 col-sm-4';
+        col.innerHTML = `<div class="chip-participante">${p}</div>`;
+        contenedor.appendChild(col);
+      });
+
+      // Exclusiones
+      if (evento.exclusiones && evento.exclusiones.length > 0) {
+        const ul = document.getElementById('rExclusiones');
+        evento.exclusiones.forEach(e => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item excl-item';
+          li.innerHTML = `<strong>${e.de}</strong> no puede regalar a <strong>${e.para}</strong>`;
+          ul.appendChild(li);
+        });
+      } else {
+        document.getElementById('rExclWrapper').classList.add('d-none');
+      }
+    }
+
+    function formatearFecha(f) {
+      if (!f) return '–';
+      const [y,m,d] = f.split('-');
+      const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      return `${d} ${meses[parseInt(m)-1]} ${y}`;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,63 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-    <title>Sorteo</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <title>Sorteo – GiftSwap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
 </head>
-
 <body class="bg-light">
 
-    <div class="container mt-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
 
-        <h2 class="text-center mb-4">Sorteo del Intercambio 🎁</h2>
+        <h2 class="text-center mb-2">🎲 Sorteo del Intercambio</h2>
+        <p class="text-center text-muted mb-4" id="subtituloSorteo"></p>
 
-        <div class="card p-4 shadow">
-
-            <h4>Información del Evento</h4>
-
-            <p><strong>Organizador:</strong> <span id="org"></span></p>
-            <p><strong>Evento:</strong> <span id="nombreEvento"></span></p>
-            <p><strong>Tipo:</strong> <span id="tipoEvento"></span></p>
-            <p><strong>Fecha:</strong> <span id="fechaEvento"></span></p>
-            <p><strong>Presupuesto:</strong> $<span id="presupuestoEvento"></span></p>
-
-            <hr>
-
-            <h4>Participantes</h4>
-
-            <ul id="listaParticipantes" class="list-group mb-3"></ul>
-
-            <h4>Exclusiones</h4>
-
-            <ul id="listaExclusiones" class="list-group mb-3"></ul>
-
-            <div class="text-center">
-
-                <button class="btn btn-danger" onclick="hacerSorteo()">
-                    Realizar Sorteo
-                </button>
-
-            </div>
-
-            <hr>
-
-            <h4>Resultados</h4>
-
-            <ul id="resultadoSorteo" class="list-group"></ul>
-
+        <!-- Estado inicial: botón sortear -->
+        <div id="panelInicio" class="card p-4 shadow text-center mb-4">
+          <div class="sorteo-animacion mb-3">🎁</div>
+          <h4 class="mb-1" id="infoNombre"></h4>
+          <p class="text-muted mb-1"><span id="infoParticipantes"></span> participantes</p>
+          <p class="text-muted small mb-4"><span id="infoExclusiones"></span></p>
+          <button class="btn btn-danger btn-lg px-5" onclick="iniciarSorteo()">
+            🎲 ¡Realizar Sorteo!
+          </button>
         </div>
 
+        <!-- Rueda/animación durante el sorteo -->
+        <div id="panelAnimacion" class="card p-4 shadow text-center mb-4 d-none">
+          <div class="rueda-sorteo" id="ruedaSorteo">🎁</div>
+          <p class="mt-3 text-muted">Sorteando...</p>
+        </div>
+
+        <!-- Resultados -->
+        <div id="panelResultados" class="d-none">
+          <div class="card p-4 shadow mb-3">
+            <h4 class="mb-3">🎊 ¡Resultados del Sorteo!</h4>
+            <div class="row g-3" id="resultadoSorteo"></div>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-12 col-md-6">
+              <button class="btn btn-danger w-100" onclick="repetirSorteo()">
+                🔄 Repetir Sorteo
+              </button>
+            </div>
+            <div class="col-12 col-md-6">
+              <a href="resumen.html" class="btn btn-outline-secondary w-100">
+                &larr; Volver al Resumen
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
 
-    <script src="js/sorteo.js"></script>
-
+  <script src="js/sorteo.js"></script>
 </body>
-
 </html>

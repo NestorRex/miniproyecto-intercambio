@@ -1,94 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-    <title>Crear Evento</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <title>Crear Evento – GiftSwap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
 </head>
-
 <body class="bg-light">
 
-    <div class="container mt-5">
+  <div class="container py-5">
 
-        <h2 class="text-center mb-4">Crear Intercambio 🎁</h2>
-
-        <div class="card p-4 shadow">
-
-            <div class="mb-3">
-                <label>Organizador</label>
-                <input type="text" id="organizador" class="form-control">
-            </div>
-
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="participa">
-                <label class="form-check-label">El organizador participa</label>
-            </div>
-
-            <div class="mb-3">
-                <label>Nombre del evento</label>
-                <input type="text" id="nombreEvento" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label>Tipo de evento</label>
-                <select id="tipoEvento" class="form-control">
-                    <option>Navidad</option>
-                    <option>Cumpleaños</option>
-                    <option>Intercambio</option>
-                    <option>Otro</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label>Fecha</label>
-                <input type="date" id="fechaEvento" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label>Presupuesto</label>
-                <input type="number" id="presupuestoEvento" class="form-control">
-            </div>
-
-            <hr>
-
-            <h5>Participantes</h5>
-
-            <div class="d-flex mb-3">
-
-                <input type="text" id="nuevoParticipante" class="form-control me-2">
-
-                <button class="btn btn-primary" onclick="agregarParticipante()">
-                    Agregar
-                </button>
-
-            </div>
-
-            <ul id="listaParticipantes" class="list-group mb-3"></ul>
-
-            <hr>
-
-            <h5>Exclusiones (Drag & Drop)</h5>
-
-            <p>Arrastra un participante sobre otro para crear exclusión</p>
-
-            <ul id="listaExclusiones" class="list-group mb-3"></ul>
-
-            <button class="btn btn-success w-100" onclick="guardarEvento()">
-                Guardar Evento
-            </button>
-
+    <!-- Barra de progreso -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="progress-wizard">
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-steps" id="progressSteps"></div>
         </div>
-
+      </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <!-- Contenedor de pasos -->
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="card p-4 shadow">
 
+          <!-- PASO 1: Organizador -->
+          <div class="wizard-step" id="paso1">
+            <h2 class="text-center mb-4">👤 Organizador</h2>
+            <div class="mb-3">
+              <label>¿Cuál es tu nombre?</label>
+              <input type="text" id="organizador" class="form-control" placeholder="Tu nombre">
+            </div>
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="participa" checked>
+              <label class="form-check-label">Inclúyeme (el organizador) en el sorteo</label>
+            </div>
+            <div class="wizard-nav">
+              <span></span>
+              <button class="btn btn-primary" onclick="siguientePaso()">Continuar &rarr;</button>
+            </div>
+          </div>
+
+          <!-- PASO 2: Participantes -->
+          <div class="wizard-step d-none" id="paso2">
+            <h2 class="text-center mb-4">👥 Participantes</h2>
+            <p class="text-muted text-center mb-3">¿Con quién vas a sortear nombres?</p>
+
+            <div class="d-flex mb-3 gap-2">
+              <input type="text" id="nuevoParticipante" class="form-control" placeholder="Nombre del participante"
+                onkeydown="if(event.key==='Enter') agregarParticipante()">
+              <button class="btn btn-primary" onclick="agregarParticipante()">+</button>
+            </div>
+
+            <!-- Lista drag & drop -->
+            <ul id="listaParticipantes" class="list-group mb-3 drop-zone"
+                ondragover="dragOverLista(event)" ondrop="dropEnLista(event)"></ul>
+
+            <p class="text-muted small text-center">🖐 Arrastra los nombres para reordenarlos</p>
+
+            <div class="wizard-nav">
+              <button class="btn btn-outline-secondary" onclick="anteriorPaso()">&larr; Atrás</button>
+              <button class="btn btn-primary" onclick="siguientePaso()">Continuar &rarr;</button>
+            </div>
+          </div>
+
+          <!-- PASO 3: Exclusiones -->
+          <div class="wizard-step d-none" id="paso3">
+            <h2 class="text-center mb-4">🚫 Exclusiones</h2>
+            <p class="text-muted text-center mb-4">¿Quieres excluir ciertos sorteos?</p>
+
+            <div class="excl-toggle row g-2 mb-4">
+              <div class="col-6">
+                <button class="btn btn-excl w-100 active" id="btnNoExcl" onclick="setExclusiones(false)">
+                  No establecer exclusiones
+                </button>
+              </div>
+              <div class="col-6">
+                <button class="btn btn-excl w-100" id="btnSiExcl" onclick="setExclusiones(true)">
+                  Establecer exclusiones
+                </button>
+              </div>
+            </div>
+
+            <div id="panelExclusiones" class="d-none">
+              <div id="exclParticipantes"></div>
+            </div>
+
+            <div class="mt-3" id="resumenExclusiones"></div>
+
+            <div class="wizard-nav mt-4">
+              <button class="btn btn-outline-secondary" onclick="anteriorPaso()">&larr; Atrás</button>
+              <button class="btn btn-primary" onclick="siguientePaso()">Continuar &rarr;</button>
+            </div>
+          </div>
+
+          <!-- PASO 4: Tipo de evento -->
+          <div class="wizard-step d-none" id="paso4">
+            <h2 class="text-center mb-4">🎉 Tipo de Evento</h2>
+            <p class="text-muted text-center mb-3">¿Para qué vas a sortear nombres?</p>
+
+            <div class="row g-2 mb-3" id="tiposEventoGrid">
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Navidad')">🎄 Navidad</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Intercambio')">🎁 Intercambio</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Cumpleaños')">🎂 Cumpleaños</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Día del Niño')">🧸 Día del Niño</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Día de la Madre')">💐 Día de la Madre</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-tipo w-100" onclick="selTipo(this,'Otro')">✏️ Mostrar más</button>
+              </div>
+            </div>
+
+            <div id="nombrePersonalizado" class="d-none mb-3">
+              <label>Nombre de la celebración</label>
+              <input type="text" id="nombreEvento" class="form-control" placeholder="Ej. Intercambio 2026">
+            </div>
+
+            <div class="wizard-nav">
+              <button class="btn btn-outline-secondary" onclick="anteriorPaso()">&larr; Atrás</button>
+              <button class="btn btn-primary" onclick="siguientePaso()">Continuar &rarr;</button>
+            </div>
+          </div>
+
+          <!-- PASO 5: Fecha -->
+          <div class="wizard-step d-none" id="paso5">
+            <h2 class="text-center mb-4">📅 Fecha del Evento</h2>
+            <p class="text-muted text-center mb-3" id="titFecha">¿Cuándo se celebra?</p>
+
+            <div class="row g-2 mb-3" id="fechasRapidas"></div>
+
+            <div class="mb-3">
+              <label>O elige otra fecha</label>
+              <input type="date" id="fechaEvento" class="form-control" onchange="selFechaManual()">
+            </div>
+
+            <div class="wizard-nav">
+              <button class="btn btn-outline-secondary" onclick="anteriorPaso()">&larr; Atrás</button>
+              <button class="btn btn-primary" onclick="siguientePaso()">Continuar &rarr;</button>
+            </div>
+          </div>
+
+          <!-- PASO 6: Presupuesto -->
+          <div class="wizard-step d-none" id="paso6">
+            <h2 class="text-center mb-4">💰 Presupuesto</h2>
+            <p class="text-muted text-center mb-3">¿Cuánto deberían gastar los participantes?</p>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="selPresupuesto(this, 100)">$100</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="selPresupuesto(this, 150)">$150</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="selPresupuesto(this, 200)">$200</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="selPresupuesto(this, 300)">$300</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="selPresupuesto(this, 500)">$500</button>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-presupuesto w-100" onclick="mostrarOtroPresupuesto(this)">Otro ✏️</button>
+              </div>
+            </div>
+
+            <div id="otroPresupuestoDiv" class="d-none mb-3">
+              <label>Introduce un importe</label>
+              <input type="number" id="presupuestoPersonalizado" class="form-control"
+                placeholder="Introduce un importe..." onchange="presupuestoSeleccionado=this.value">
+            </div>
+
+            <div class="wizard-nav">
+              <button class="btn btn-outline-secondary" onclick="anteriorPaso()">&larr; Atrás</button>
+              <button class="btn btn-success w-100 ms-2" onclick="guardarEvento()">Guardar y continuar ✓</button>
+            </div>
+          </div>
+
+        </div><!-- /card -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
 </body>
-
 </html>
